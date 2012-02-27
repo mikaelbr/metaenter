@@ -1,0 +1,83 @@
+@charset "utf-8";
+
+textarea.metabrag-message-box {
+	height:75px;
+	resize: none;
+	display: block;
+	width: 100%;
+}
+
+
+div.metabrag-message-box {
+
+	min-height: 40px;
+	max-height: 140px;
+
+	overflow-y: auto;
+
+}
+
+.metabrag-message-box {
+	color:#666;
+	font-size:0.9em;
+
+	margin:5px 0px 10px 0px;
+	padding: 3px;
+
+	border:#999 1px solid;
+	font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif;
+
+
+	box-shadow: 0 0 5px rgba(81, 203, 238, 0);
+	-webkit-box-shadow: 0 0 5px rgba(81, 203, 238, 0);
+	-moz-box-shadow: 0 0 5px rgba(81, 203, 238, 0);
+}
+
+span.metabrag-counter {
+	float: right;
+	font-style:italic;
+	color: #ccc;
+}
+
+
+.metabrag-message-box:focus,
+#testing:focus {
+	color:#000;
+	outline:none;
+	border:#35a5e5 1px solid;
+	font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif;
+	box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+	-webkit-box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+	-moz-box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+
+	transition: all 0.25s ease-in-out;
+	-webkit-transition: all 0.25s ease-in-out;
+	-moz-transition: all 0.25s ease-in-out;
+	
+}
+
+
+fieldset {
+	width: 600px;
+	margin: auto;
+	box-shadow: 0 0 20px rgba(0,0,0,.1);
+	box-sizing: border-box;
+	padding: 3em;
+	position: relative;
+	border: 0px;
+}
+
+fieldset legend {
+	padding-bottom: 2em;
+	font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif;
+	font-weight: bold;
+}
+
+
+
+
+
+
+
+
+
