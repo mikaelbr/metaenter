@@ -1,0 +1,11 @@
+/**
+ *  This jQuery Plugin, metaenter, will allow you to convert regular textareas into divs with content editable,
+ *  and have a simular effect as the Facebook message boxes. Submit form on meta key + enter, auto expand box,
+ *  and lots more. 
+ *  
+ *  Documentation: https://github.com/mikaelbr/metaenter#readme
+ *  URL: https://github.com/mikaelbr/metaenter
+ *  Author: Mikael Brevik <mikaelbre@gmail.com>
+ *  Version: @VERSION
+ *  Date: 
+ **/

@@ -8,20 +8,50 @@
 
 	<form action="">
 		<fieldset>
-			<legend>Meta Enter</legend>
+			<legend>Two input fields in the same form</legend>
 			<label for="message">Input text
-				<textarea name="message" id="message"></textarea>
+				<textarea name="message1" class="metaenter-box" id="message"></textarea>
+			</label>
+
+			<label for="message2">Input text
+				<textarea name="message2" class="metaenter-box" id="message2"></textarea>
+			</label>
+
+			<p><input type="submit"></p>
+
+			<p>Accumulated toggle checkboxes</p>
+		</fieldset>
+	</form>
+
+	<form action="">
+		<fieldset>
+			<legend>Input field in a seperate form</legend>
+			<label for="message3">Input text
+				<textarea name="message3" class="metaenter-box" id="message3"></textarea>
 			</label>
 			<p><input type="submit"></p>
 		</fieldset>
 	</form>
-	
+
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 	<script src="/js/jquery.metaenter.js"></script>
 	<script>
 
 
-		$("#message").metaenter();
+
+		$(".metaenter-box").metaenter({
+			useDiv: true,
+			useCounter: true,
+			useFacebookStyle: true
+		});
+
+		$("form").on("submit", function (e) {
+			console.log("Her");
+			e.preventDefault();
+			var v = $(this).serialize();
+			console.log(v);
+		});
+		
 
 	</script>
 </body>

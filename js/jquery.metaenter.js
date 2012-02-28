@@ -2,221 +2,251 @@
 
 (function ($) {
 
-	// Helper methods
+    // Helper methods
 
-	$.fn.getPreText = function () {
-	    var ce = $("<pre />").html(this.html());
-	    if ($.browser.webkit)
-	      ce.find("div").replaceWith(function() { return "\n" + this.innerHTML; });
-	    if ($.browser.msie)
-	      ce.find("p").replaceWith(function() { return this.innerHTML + "<br>"; });
-	    if ($.browser.mozilla || $.browser.opera || $.browser.msie)
-	      ce.find("br").replaceWith("\n");
+    $.fn.getPreText = function () {
+        var ce = $("<pre />").html(this.html());
+        if ($.browser.webkit)
+            ce.find("div").replaceWith(function() { return "\n" + this.innerHTML; });
+        if ($.browser.msie)
+            ce.find("p").replaceWith(function() { return this.innerHTML + "<br>"; });
+        if ($.browser.mozilla || $.browser.opera || $.browser.msie)
+            ce.find("br").replaceWith("\n");
 
-	    return ce.text();
-	};
+        return ce.text();
+    };
 
-	var methods = {
-		init: function (options) {
-			return this.each(function () {
-				var $this = $(this),
-					data = $this.data('metaenter');
+    var methods = {
+        init: function (options) {
+            return this.each( function () {
+                var $this = $(this),
+                    data = $this.data('metaenter');
 
-				// If the plugin hasn't been initialized yet
-                if (!data ) {
+                // If the plugin hasn't been initialized yet
+                if ( !data ) {
 
-                	var settings = $.extend({}, $.fn.metaenter.defaults, options);
+                    var settings = $.extend( {}, $.fn.metaenter.defaults, options );
 
-                	// Check if form is set
-					if ( !settings.form ) {
-						// Set form
-						settings.form = $this.parents("form");
-					}
+                    // Check if form is set
+                    if ( !settings.form ) {
+                        // Set form
+                        settings.form = $this.parents( "form" );
+                    }
 
-					$this.data('metaenter', {
-						_settings: settings
-					});
+                    $this.data( 'metaenter', {
+                        _settings: settings
+                    } );
 
-					methods._render.call(this);
-					methods._bindEventHandlers.call(this);
+                    methods._render.call( this );
+                    methods._bindEventHandlers.call( this );
+                }
 
-				}
+            } );
+        },
 
-			});
-		},
-
-		_render: function () {
-			var $this = $(this),
-				data = $this.data('metaenter');
-
-			if ( data._settings.useDiv ) {
-        		$elm = $("<div />", {
-        			"contenteditable": "true"
-        		}).insertBefore($this);
-        		$this.hide();
-
-        		$elm.css({
-        			"min-height": data._settings.minHeight,
-        			"max-height": data._settings.maxHeight
-        		})
-        	} else {
-        		$elm = $this;
-
-        		var fontSize = $elm.css('font-size'),
-					lineHeight = Math.floor(parseInt(fontSize.replace('px','')) * 1.5),
-					paddingBottom = parseInt($elm.css("padding-bottom").replace('px', '')),
-					height = Math.ceil( ( data._settings.minHeight - paddingBottom) / lineHeight ) * lineHeight 
-
-            	$elm.height(height);
-        	}
+        _render: function () {
+            var $this = $(this),
+                data = $this.data( 'metaenter' );
 
 
-        	// Check if we should add a checkbox
-        	if ( data._settings.useFacebookStyle ) {
-        		var checkBox = '<label><input type="checkbox" class="metabrag-return-button" checked>'+data._settings.checboxLbl+'</label>';
+            // We should convert the box to a content editable
+            if ( data._settings.useDiv ) {
+                $elm = $("<div />", {
+                    "contenteditable": "true"
+                }).insertBefore($this);
+                
+                $this.hide();
 
-        		$this.parents('form').find("[type='submit']").hide()
-        			.parent().append(checkBox);
-        	}
+                $elm.css({
+                    "min-height": data._settings.minHeight,
+                    "max-height": data._settings.maxHeight
+                });
+            } else {
+                $elm = $this;
 
-        	$elm.addClass("metabrag-message-box");
-        	$this.addClass("metabrag-init");
+                var fontSize = $elm.css('font-size'),
+                    lineHeight = Math.floor(parseInt(fontSize.replace('px','')) * 1.5),
+                    paddingBottom = parseInt($elm.css("padding-bottom").replace('px', '')),
+                    height = Math.ceil( ( data._settings.minHeight - paddingBottom) / lineHeight ) * lineHeight 
 
-        	if ( data._settings.useCounter ) {
-        		$('<span />', {
-	        		class: "metabrag-counter",
-	        		text: '0'
-	        	}).insertAfter($elm);
-        	}
+                $elm.height(height);
+            }
 
-        	data.target = $elm;
 
-			// We should convert the box to a content editable
-		},
+              // Check if we should add a checkbox
+            if ( data._settings.useFacebookStyle ) {
 
-		_extendBox: function (e) {
-			var $this = $(this),
-				data = $this.data('metaenter'),
-				paddingBottom = parseInt($this.css("padding-bottom").replace('px', ''));
+                var existingCheckBox = data._settings.form.find("input.metabrag-return-button").parent();
+                if ( !existingCheckBox.length ) {
+                    var checkBox =  $('<label><input type="checkbox" class="metabrag-return-button">'+data._settings.checkBoxTxt+'</label>'),
+                        submitButton = data._settings.form.find("[type='submit']");
+                    
+                    data.checkBoxLbl = checkBox.insertAfter( submitButton );
 
-			if ( $this.height() < data._settings.maxHeight && $this.get(0).scrollHeight > $this.outerHeight() ) {
-				var fontSize = $this.css('font-size'),
-					lineHeight = Math.floor(parseInt(fontSize.replace('px','')) * 1.5);
+                    if ( data._settings.checkBoxOnByDefault ) {
+                        checkBox.children("input").attr("checked", "checked");
+                        submitButton.hide(); 
+                    }
+                } else {
+                    data.checkBoxLbl = existingCheckBox;
+                    data._doNotAddCheckBoxEvent = true;
+                }
 
-				$this.height($this.height() + lineHeight);
-			}
+            }
 
-		},
+            $elm.addClass("metabrag-message-box");
+            $this.addClass("metabrag-init");
 
-		_bindEventHandlers: function () {
-			var $this = $(this),
-				data = $this.data('metaenter');
+            if ( data._settings.useCounter ) {
+                data.counterSpan = $('<span />', {
+                    class: "metabrag-counter",
+                    text: '0'
+                }).insertAfter($elm);
+            }
 
-			data.target.on('keydown', function (e) {
-				methods._submitForm.call($this, e);
-			});
+            data.target = $elm;
 
-			data.target.on('keyup', function (e) {
-				methods._countLetters.call($this, e);
-			});
+        },
 
-        	if ( data._settings.useCounter ) {
-				$this.on('metabrag.newtype', methods._updateLetterCounter);
-			}
+        _expandTextarea: function (e) {
+            var $this = $(this),
+                data = $this.data('metaenter'),
+                paddingBottom = parseInt($this.css("padding-bottom").replace('px', ''));
 
-			if ( data._settings.useDiv ) {
-				data._settings.form.on('submit', function (e) {
-					methods._mapValuesFromDiv.call($this, e)
-				});
-			} else {
-				$this.on('keyup', methods._extendBox);
-			}
+            if ( $this.height() < data._settings.maxHeight && $this.get(0).scrollHeight > $this.outerHeight() ) {
+                var fontSize = $this.css('font-size'),
+                    lineHeight = Math.floor(parseInt(fontSize.replace('px','')) * 1.5);
 
-			$(".metabrag-return-button").on('change', function (e) {
-				methods._toggleButtonVisibility.call($this, e);
-			});
-		},
+                $this.height($this.height() + lineHeight);
+            }
 
-		_toggleButtonVisibility: function (e) {
-			var $this = $(this),
-				data = $this.data('metaenter'),
-				doReturn = $('.metabrag-return-button').is(":checked");
+        },
 
-			$this.parents('form').find("[type='submit']").toggle();
-		},
+        _bindEventHandlers: function () {
+            var $this = $(this),
+                data = $this.data('metaenter');
 
-		_mapValuesFromDiv: function (e) {
-			var $this = $(this),
-				data = $this.data('metaenter');
+            data.target.on('keydown', function (e) {
+                methods._doNewLineOrSubmit.call($this, e);
+            });
 
-			$this.val( data.target.getPreText() );
-		},
+            if ( data._settings.useCounter ) {
+                data.target.on('keyup', function (e) {
+                    methods._countLettersTyped.call($this, e);
+                });
 
-		_countLetters: function (e) {
-			var $this = $(this),
-				data = $this.data('metaenter');
+                $this.on('metabrag.newtype', methods._updateLetterCounter);
+            }
 
-			data.letters = data.target.getPreText().length;
-			$this.trigger('metabrag.newtype');
-		},
+            if ( data._settings.useDiv ) {
+                data._settings.form.on('submit', function (e) {
+                    methods._mapValuesFromDivToTextarea.call($this, e)
+                });
+            } else {
+                $this.on('keyup', methods._expandTextarea);
+            }
 
-		_updateLetterCounter: function () {
-			var $this = $(this),
-				data = $this.data('metaenter');
+            if ( data._settings.useFacebookStyle && !data._doNotAddCheckBoxEvent ) {
+                data.checkBoxLbl.children("input").on('change', function (e) {
+                    methods._toggleButtonVisibility.call($this, e);
+                });
+            }
+        },
 
-			data.target.siblings('span.metabrag-counter').text(data.letters);
-		},
+        _toggleButtonVisibility: function (e) {
+            var $this = $(this),
+                data = $this.data('metaenter'),
+                doReturn = !data.checkBoxLbl || data.checkBoxLbl.children("input").is(":checked");
 
-		_submitForm: function (e) {
-			var $this = $(this),
-				data = $this.data('metaenter'),
-				doReturn = $('.metabrag-return-button').is(":checked");
+            data._settings.form.find("[type='submit']").toggle();
+        },
 
-			if ( doReturn && e.shiftKey && e.keyCode === 13 ) {
-				return true;
-			} 
+        _mapValuesFromDivToTextarea: function (e) {
+            var $this = $(this),
+                data = $this.data('metaenter');
 
-			if ( e.keyCode === 13 && (e.metaKey || doReturn) ) {
-				// Submit form instead of adding a new line.
+            $this.val( data.target.getPreText() );
+        },
 
-				data._settings.form.submit();
+        _countLettersTyped: function (e) {
+            var $this = $(this),
+                data = $this.data('metaenter');
 
-				e.preventDefault(); // Stop from making new line. 
-				return false;
-			}  
+            if ( data._settings.useDiv ) {
+                data.letters = data.target.getPreText().length;
+            } else {
+                data.letters = data.target.val().length;
+            }
+            $this.trigger('metabrag.newtype');
+        },
 
-			return true;
+        _updateLetterCounter: function () {
+            var $this = $(this),
+                data = $this.data('metaenter');
 
-		},
+            data.counterSpan.text(data.letters);
+        },
 
-		// Set or retrive options.
-		options: function(options) {
-			var $this = $(this),
-				data = $this.data('metaenter');
+        _doNewLineOrSubmit: function (e) {
+            var $this = $(this),
+                data = $this.data('metaenter'),
+                doReturn = !data.checkBoxLbl || data.checkBoxLbl.children("input").is(":checked");
 
-			// Check if we should just return the options.
-			if ( !options ) {
-				return data._settings;
-			}
+            if ( doReturn && e.shiftKey && e.keyCode === 13 ) {
+                return true;
+            } 
 
-			// Alter settings.
-			data._settings = $.extend({}, data._settings, options);
+            if ( e.keyCode === 13 && (e.metaKey || doReturn) ) {
+                // Submit form instead of adding a new line.
 
-			// Return this to allow chaining..
-			return this;
-		},
+                data._settings.form.submit();
 
-		remove: function(options) {
-			$("div.metabrag-message-box").remove();
-			$(".metabrag-return-button").parents("label").remove();
-			$("span.metabrag-counter").parents("label").remove();
-			$(this).removeClass('metabrag-message-box').removeClass('metabrag-init');
-		}
-	};
-	
-	$.fn.metaenter = function (method) {
-		// Allow method calls (but not prefixed by _
-        if ( typeof method == "string" && method.substr(0,1) != "_" && methods[ method ] ) {
+                e.preventDefault(); // Stop from making new line. 
+                return false;
+            }
+
+            return true;
+
+        },
+
+        // Set or retrive options.
+        options: function(options) {
+            var $this = $(this),
+                data = $this.data('metaenter');
+
+            // Check if we should just return the options.
+            if ( !options ) {
+                return data._settings;
+            }
+
+            // Alter settings.
+            data._settings = $.extend({}, data._settings, options);
+
+            // Return this to allow chaining..
+            return this;
+        },
+
+        remove: function(options) {
+            var data = $(this).data("metabrag");
+
+            $("div.metabrag-message-box").remove();
+            data.checkBoxLbl.remove();
+            data.counterSpan.remove();
+            
+            $(this)
+                .removeClass('metabrag-message-box')
+                .removeClass('metabrag-init')
+                .data("metatuone", undefined);
+        },
+
+        numLetters: function () {
+            return $(this).data('metaenter').letters;
+        }
+    };
+
+    $.fn.metaenter = function (method) {
+        // Allow method calls (but not prefixed by _
+        if ( typeof method === "string" && method.substr(0,1) !== "_" && methods[ method ] ) {
             return methods[method].apply(this, Array.prototype.slice.call( arguments, 1 ));
         }
         // If argument is object or not set, init plugin.
@@ -228,16 +258,17 @@
             $.error( 'Method ' +  method + ' does not exist on jQuery.metaenter' );
             return this;
         }
-	};
+    };
 
-	$.fn.metaenter.defaults = {
-		useDiv: true,
-		useFacebookStyle: true,
-		useCounter: true,
-		form: false,
-		minHeight: 40, // height in pixels
-		maxHeight: 400, // max height in pixels
-		checboxLbl: "Activate submit on return"
-	};
+    $.fn.metaenter.defaults = {
+        useDiv: true,
+        useFacebookStyle: true,
+        useCounter: true,
+        form: false,
+        minHeight: 40, // height in pixels
+        maxHeight: 400, // max height in pixels
+        checkBoxTxt: "Submit form on return",
+        checkBoxOnByDefault: false
+    };
 
 })(jQuery);
