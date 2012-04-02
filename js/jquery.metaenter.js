@@ -65,9 +65,9 @@
                 $elm = $this;
 
                 var fontSize = $elm.css('font-size'),
-                    lineHeight = Math.floor(parseInt(fontSize.replace('px','')) * 1.5),
-                    paddingBottom = parseInt($elm.css("padding-bottom").replace('px', '')),
-                    height = Math.ceil( ( data._settings.minHeight - paddingBottom) / lineHeight ) * lineHeight 
+                    lineHeight = Math.floor(parseInt(fontSize.replace('px',''), 10) * 1.5),
+                    paddingBottom = parseInt($elm.css("padding-bottom").replace('px', ''), 10),
+                    height = Math.ceil( ( data._settings.minHeight - paddingBottom) / lineHeight ) * lineHeight;
 
                 $elm.height(height);
             }
@@ -76,16 +76,16 @@
               // Check if we should add a checkbox
             if ( data._settings.useFacebookStyle ) {
 
-                var existingCheckBox = data._settings.form.find("input.metabrag-return-button").parent();
+                var existingCheckBox = data._settings.form.find("input.metaenter-return-button").parent();
                 if ( !existingCheckBox.length ) {
-                    var checkBox =  $('<label><input type="checkbox" class="metabrag-return-button">'+data._settings.checkBoxTxt+'</label>'),
+                    var checkBox =  $('<label><input type="checkbox" class="metaenter-return-button">'+data._settings.checkBoxTxt+'</label>'),
                         submitButton = data._settings.form.find("[type='submit']");
                     
                     data.checkBoxLbl = checkBox.insertAfter( submitButton );
 
                     if ( data._settings.checkBoxOnByDefault ) {
                         checkBox.children("input").attr("checked", "checked");
-                        submitButton.hide(); 
+                        submitButton.hide();
                     }
                 } else {
                     data.checkBoxLbl = existingCheckBox;
@@ -94,12 +94,12 @@
 
             }
 
-            $elm.addClass("metabrag-message-box");
-            $this.addClass("metabrag-init");
+            $elm.addClass("metaenter-message-box");
+            $this.addClass("metaenter-init");
 
             if ( data._settings.useCounter ) {
                 data.counterSpan = $('<span />', {
-                    class: "metabrag-counter",
+                    'class': "metaenter-counter",
                     text: '0'
                 }).insertAfter($elm);
             }
@@ -111,11 +111,11 @@
         _expandTextarea: function (e) {
             var $this = $(this),
                 data = $this.data('metaenter'),
-                paddingBottom = parseInt($this.css("padding-bottom").replace('px', ''));
+                paddingBottom = parseInt($this.css("padding-bottom").replace('px', ''), 10);
 
             if ( $this.height() < data._settings.maxHeight && $this.get(0).scrollHeight > $this.outerHeight() ) {
                 var fontSize = $this.css('font-size'),
-                    lineHeight = Math.floor(parseInt(fontSize.replace('px','')) * 1.5);
+                    lineHeight = Math.floor(parseInt(fontSize.replace('px',''), 10) * 1.5);
 
                 $this.height($this.height() + lineHeight);
             }
@@ -135,12 +135,12 @@
                     methods._countLettersTyped.call($this, e);
                 });
 
-                $this.on('metabrag.newtype', methods._updateLetterCounter);
+                $this.on('metaenter.newtype', methods._updateLetterCounter);
             }
 
             if ( data._settings.useDiv ) {
                 data._settings.form.on('submit', function (e) {
-                    methods._mapValuesFromDivToTextarea.call($this, e)
+                    methods._mapValuesFromDivToTextarea.call($this, e);
                 });
             } else {
                 $this.on('keyup', methods._expandTextarea);
@@ -177,7 +177,7 @@
             } else {
                 data.letters = data.target.val().length;
             }
-            $this.trigger('metabrag.newtype');
+            $this.trigger('metaenter.newtype');
         },
 
         _updateLetterCounter: function () {
@@ -194,14 +194,14 @@
 
             if ( doReturn && e.shiftKey && e.keyCode === 13 ) {
                 return true;
-            } 
+            }
 
             if ( e.keyCode === 13 && (e.metaKey || doReturn) ) {
                 // Submit form instead of adding a new line.
 
                 data._settings.form.submit();
 
-                e.preventDefault(); // Stop from making new line. 
+                e.preventDefault(); // Stop from making new line.
                 return false;
             }
 
@@ -227,15 +227,15 @@
         },
 
         remove: function(options) {
-            var data = $(this).data("metabrag");
+            var data = $(this).data("metaenter");
 
-            $("div.metabrag-message-box").remove();
+            $("div.metaenter-message-box").remove();
             data.checkBoxLbl.remove();
             data.counterSpan.remove();
             
             $(this)
-                .removeClass('metabrag-message-box')
-                .removeClass('metabrag-init')
+                .removeClass('metaenter-message-box')
+                .removeClass('metaenter-init')
                 .data("metatuone", undefined);
         },
 

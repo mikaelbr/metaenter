@@ -1,6 +1,6 @@
 @charset "utf-8";
 
-textarea.metabrag-message-box {
+textarea.metaenter-message-box {
 	height:75px;
 	resize: none;
 	display: block;
@@ -8,7 +8,7 @@ textarea.metabrag-message-box {
 }
 
 
-div.metabrag-message-box {
+div.metaenter-message-box {
 
 	min-height: 40px;
 	max-height: 140px;
@@ -17,7 +17,7 @@ div.metabrag-message-box {
 
 }
 
-.metabrag-message-box {
+.metaenter-message-box {
 	color:#666;
 	font-size:0.9em;
 
@@ -33,14 +33,14 @@ div.metabrag-message-box {
 	-moz-box-shadow: 0 0 5px rgba(81, 203, 238, 0);
 }
 
-span.metabrag-counter {
+span.metaenter-counter {
 	float: right;
 	font-style:italic;
 	color: #ccc;
 }
 
 
-.metabrag-message-box:focus,
+.metaenter-message-box:focus,
 #testing:focus {
 	color:#000;
 	outline:none;
@@ -57,7 +57,9 @@ span.metabrag-counter {
 }
 
 
-fieldset {
+
+
+/*fieldset {
 	width: 600px;
 	margin: 20px auto;
 	box-shadow: 0 0 20px rgba(0,0,0,.1);
@@ -75,9 +77,7 @@ fieldset legend {
 
 
 
-
-
-
+*/
 
 
 
